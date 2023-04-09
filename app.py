@@ -1,11 +1,17 @@
 from flask import Flask
-from sqlalchemy import create_engine
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 app = Flask(__name__)
-db_connection_string = "mysql+pymysql://01l3qjmdqqa2hzei4es0:pscale_pw_byp2LROxNX1n6Xbo4dDVjjc3cEu9pNQa5iT7rru8VVb@aws.connect.psdb.cloud/students?charset=utf8mb4"
-engine = create_engine(db_connection_string,
-                       connect_args={"ssl": {
-                         "ssl_ca": "/etc/ssl/cert.pem"
-                       }},
-                       echo=True)
-conn = engine.connect()
+app.secret_key = 'JHGHJGHT&^&*%&^*%&*%^&$^&RFHJGVHJVGHJFGHFGH'
+app.config["SQLALCHEMY_DATABASE_URI"] = ""
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+  'connect_args': {
+    'ssl': {
+      "ssl_ca": "/etc/ssl/cert.pem"
+    }
+  }
+}
+db = SQLAlchemy(app)
+login = LoginManager(app)

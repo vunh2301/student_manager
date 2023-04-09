@@ -1,34 +1,77 @@
-from sqlalchemy import MetaData, Table, Column, String, Integer, DateTime
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
+from app import db, app
+from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 
-meta = MetaData()
-students = Table(
-  'students',
-  meta,
-  Column('id', Integer, primary_key=True),
-  Column('name', String),
-  Column('gender', String),
-  Column('brithday', String),
-  Column('address', String),
-)
-entities = Table('entities', meta, Column('id', Integer, primary_key=True),
-                 Column('title', Integer), Column('type', String),
-                 Column('value', String))
-bang_diem = Table('bang_diem', meta, Column('id', Integer, primary_key=True),
-                  Column('nam_hoc', Integer), Column('mon_hoc', String),
-                  Column('student_id', Integer), Column('kh1', Integer),
-                  Column('kh1_15p', Integer), Column('kh1_45p', Integer),
-                  Column('kh2', Integer), Column('kh2_15p', Integer),
-                  Column('kh2_45p', Integer))
 
-mon_hoc = Table('mon_hoc', meta, Column('id', Integer, primary_key=True),
-                Column('name', Integer))
+# Define Model
+class User(db.Model, UserMixin):
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  name = Column(String(100), nullable=False)
+  username = Column(String(50), nullable=False, unique=True)
+  password = Column(String(100), nullable=False)
+  user_role = Column(String(20), default='USER')
 
-lop_hoc = Table('lop_hoc', meta, Column('id', Integer, primary_key=True),
-                Column('name', String), Column('khoi_lop', Integer),
-                Column('nam_hoc', Integer))
+  def __str__(self):
+    return self.name
 
-hoc_sinh = Table('hoc_sinh', meta, Column('id', Integer, primary_key=True),
-                 Column('name', String), Column('lop_hoc_id', Integer),
-                 Column('gioi_tinh', String), Column('ngay_sinh', DateTime),
-                 Column('dia_chi', String), Column('email', String),
-                 Column('sdt', String))
+
+class Mon_hoc(db.Model):
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  name = Column(String(50))
+
+  def __str__(self):
+    return self.name
+
+
+class Lop_hoc(db.Model):
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  name = Column(String(50))
+  khoi_lop = Column(Integer)
+  nam_hoc = Column(Integer)
+  sl_toi_da = Column(Integer, default=40)
+
+  def __str__(self):
+    return self.name
+
+
+class Hoc_sinh(db.Model):
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  name = Column(String(50))
+  lop_hoc_id = Column(Integer, ForeignKey(Lop_hoc.id))
+  gioi_tinh = Column(String(50))
+  ngay_sinh = Column(DateTime)
+  dia_chi = Column(String(50))
+  email = Column(String(50))
+  sdt = Column(String(50))
+  lop_hoc_detail = relationship('Lop_hoc', backref='hoc_sinh', lazy=True)
+
+  def __str__(self):
+    return self.name
+
+
+class Bang_diem(db.Model):
+  id = Column(Integer, primary_key=True, autoincrement=True)
+  nam_hoc = Column(Integer)
+  mon_hoc = Column(String(50))
+  student_id = Column(Integer)
+  kh1 = Column(Integer)
+  kh1_15p = Column(Integer)
+  kh1_45p = Column(Integer)
+  kh2 = Column(Integer)
+  kh2_15p = Column(Integer)
+  kh2_45p = Column(Integer)
+
+  def __str__(self):
+    return self.name
+
+
+if __name__ == '__main__':
+  with app.app_context():
+    db.create_all()
+    # import hashlib
+    # u1 = User(username='admin',
+    #           password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()),
+    #           name='Administrator')
+    # db.session.add_all([u1])
+    # db.session.commit()
