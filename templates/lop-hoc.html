@@ -53,7 +53,7 @@
           <th scope="col">Lớp</th>
           <th scope="col">Khối</th>
           <th scope="col">Năm học</th>
-          <th scope="col">SL học sinh tối đa</th>
+          <th scope="col">Sỉ số</th>
           <th></th>
         </tr>
       </thead>
@@ -64,7 +64,7 @@
             <td>{{item.name}}</td>
             <td>{{item.khoi_lop}}</td>
             <td>{{item.nam_hoc}}</td>
-            <td>{{item.sl_toi_da}}</td>
+            <td>{{item[5]}} /{{item.sl_toi_da}}</td>
             <td>
               <a href="/lop-hoc/{{item.id}}" class="btn btn-primary btn-sm" role="button">Chi tiết</a>
               <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update-{{item.id}}" >Cập nhật</button>

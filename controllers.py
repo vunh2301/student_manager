@@ -1,5 +1,6 @@
 from models import Mon_hoc, Lop_hoc, Hoc_sinh, Bang_diem, User
 from app import db
+from sqlalchemy import func
 import hashlib
 
 # Người dùng
@@ -56,7 +57,10 @@ def delete_mon_hoc(id):
 
 # Lớp học
 def list_lop_hoc():
-  return Lop_hoc.query.all()
+  return db.session\
+    .query(Lop_hoc.id, Lop_hoc.name, Lop_hoc.khoi_lop, Lop_hoc.nam_hoc, Lop_hoc.sl_toi_da, func.count(Hoc_sinh.lop_hoc_id))\
+    .join(Hoc_sinh, Hoc_sinh.lop_hoc_id.__eq__(Lop_hoc.id), isouter=True)\
+    .group_by(Lop_hoc.id).all()
 
 
 def get_lop_hoc(id):
