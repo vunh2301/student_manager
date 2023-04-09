@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-5">
+  <form method="POST">
+    <input name="quy_dinh" type="hidden" />
+    <h3>Quy định <button type="submit" class="btn btn-primary btn-sm">Lưu</button></h3>
+    <div class="list-group">
+      {% for item in quy_dinh %}
+      <a href="#" class="list-group-item list-group-item-action">{{item.title}} <input name="{{item.id}}" class="form-control form-control-sm d-inline" style="width: 120px;" value="{{item.value}}" type="number"/></a>
+      {%endfor%}
+    </div>
+  </form>
+</div>
+{% endblock %}

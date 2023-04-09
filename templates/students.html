@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-5">
+  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add" >Thêm mới</button>
+  <!-- Modal Update -->
+  <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form method="post">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="add">Cập nhật thông tin</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="username" class="form-label">Họ tên</label>
+                <input name="name" type="text" class="form-control">
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Giới tính</label>
+                <select name="gender" class="form-select">
+                    <option value="nam">Nam</option>
+                    <option value="nu">Nữ</option>
+                  </select>
+              </div>
+              <div class="mb-3">
+                <label for="username" class="form-label">Ngày sinh</label>
+                <input name="brithday" class="form-control" type="date" />
+              </div>
+              <div class="mb-3">
+                <label for="username" class="form-label">Địa chỉ</label>
+                <textarea name="address" class="form-control" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+              <button class="btn btn-primary" type="submit">Cập nhật</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  <div class="table-responsive">
+    <table class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th scope="col">STT</th>
+          <th scope="col">Họ tên</th>
+          <th scope="col">Giới tính</th>
+          <th scope="col">Năm sinh</th>
+          <th scope="col">Địa chỉ</th>
+          <th scope="col">#</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td>{{loop.index}}</td>
+            <td>{{student.name}}</td>
+            <td>{% if student.gender == 'nam' %}Nam{%elif student.gender == 'nu'%}Nữ{%endif%}</td>
+            <td>{{student.brithday}}</td>
+            <td>{{student.address}}</td>
+            <td>
+              <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update-{{student.id}}" >Cập nhật</button>
+              <form method="POST" class="d-inline">
+                <input name="delete" type="hidden" value="{{student.id}}">
+                <button class="btn btn-primary btn-sm btn-danger" type="submit" >Xoá</button>
+              </form>
+              <!-- Modal Update -->
+              <div class="modal fade" id="update-{{student.id}}" tabindex="-1" aria-labelledby="update-{{student.id}}" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form method="post">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="update-{{student.id}}">Cập nhật thông tin</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <input name="id" type="hidden" value="{{student.id}}">
+                        <div class="mb-3">
+                          <label for="username" class="form-label">Họ tên</label>
+                          <input name="name" type="text" class="form-control" value="{{student.name}}">
+                        </div>
+                        <div class="mb-3">
+                          <label for="password" class="form-label">Giới tính</label>
+                          <select name="gender" class="form-select">
+                              <option value="nam" {% if student.gender == 'nam' %}selected{% endif %}>Nam</option>
+                              <option value="nu" {% if student.gender == 'nu' %}selected{% endif %}>Nữ</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                          <label for="username" class="form-label">Ngày sinh</label>
+                          <input name="brithday" class="form-control" type="date" value="{{student.birthday}}" />
+                        </div>
+                        <div class="mb-3">
+                          <label for="username" class="form-label">Địa chỉ</label>
+                          <textarea name="address" class="form-control" rows="3">{{student.address}}</textarea>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button class="btn btn-primary" type="submit">Cập nhật</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
