@@ -96,8 +96,8 @@ def report_lop_hoc(mon_hoc_id):
       for bang_diem in ds_bang_diem:
         print("hoc sinh", bang_diem["name"], bang_diem["tb_hk1"],
               bang_diem["tb_hk2"])
-        tb_hk_1 += bang_diem["tb_hk1"]
-        tb_hk_2 += bang_diem["tb_hk2"]
+        tb_hk_1 = bang_diem["tb_hk1"]
+        tb_hk_2 = bang_diem["tb_hk2"]
         if tb_hk_1 >= 5:
           sl_dat_hk_1 += 1
         if tb_hk_2 >= 5:
@@ -107,15 +107,15 @@ def report_lop_hoc(mon_hoc_id):
       if sl_dat_hk_2 > 0:
         tl_dat_hk_2 = round(sl_dat_hk_2 / lop.si_so * 100, 2)
 
-      reports.append({
-        "id": lop.id,
-        "name": lop.name,
-        "si_so": lop.si_so,
-        "sl_dat_hk_1": sl_dat_hk_1,
-        "tl_dat_hk_1": tl_dat_hk_1,
-        "sl_dat_hk_2": sl_dat_hk_2,
-        "tl_dat_hk_2": tl_dat_hk_2
-      })
+    reports.append({
+      "id": lop.id,
+      "name": lop.name,
+      "si_so": lop.si_so,
+      "sl_dat_hk_1": sl_dat_hk_1,
+      "tl_dat_hk_1": tl_dat_hk_1,
+      "sl_dat_hk_2": sl_dat_hk_2,
+      "tl_dat_hk_2": tl_dat_hk_2
+    })
   return reports
 
 
