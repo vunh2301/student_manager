@@ -87,11 +87,11 @@ def trung_binh(lop_hoc_id):
   if "mon_hoc" in request.args:
     mon_hoc = int(request.args['mon_hoc'])
 
-  ds_bang_diem = list_bang_diem_lop_hoc(mon_hoc)
+  ds_bang_diem = list_bang_diem_lop_hoc(mon_hoc, lop_hoc_id)
   print(ds_bang_diem)
   return render_template('trung-binh.html',
                          ds_bang_diem=ds_bang_diem,
-                         lop_hoc=lop_hoc)
+                         lop_hoc=lop_hoc,mon_hoc=mon_hoc)
 
 
 @app.route("/lop-hoc/<int:lop_hoc_id>/bang-diem")
@@ -104,7 +104,7 @@ def bang_diem(lop_hoc_id):
   if "mon_hoc" in request.args:
     mon_hoc = int(request.args['mon_hoc'])
 
-  ds_bang_diem_lop_hoc = list_bang_diem_lop_hoc(mon_hoc)
+  ds_bang_diem_lop_hoc = list_bang_diem_lop_hoc(mon_hoc, lop_hoc_id)
 
   return render_template('bang-diem.html',
                          ds_mon_hoc=ds_mon_hoc,

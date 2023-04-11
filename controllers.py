@@ -1,7 +1,6 @@
 from models import Mon_hoc, Lop_hoc, Hoc_sinh, Bang_diem, User
 from app import db
-from sqlalchemy import func
-from flask import jsonify
+from sqlalchemy import func, and_
 import hashlib
 import datetime
 
@@ -80,6 +79,18 @@ def json_list_lop_hoc():
     .join(Hoc_sinh, Hoc_sinh.lop_hoc_id.__eq__(Lop_hoc.id), isouter=True)\
     .group_by(Lop_hoc.id).all()]
 
+def report_lop_hoc():
+  reports = []
+  ds_lop_hoc = list_lop_hoc()
+  for lop in ds_lop_hoc:
+    ds_hoc_sinh = list_hoc_sinh(lop.id)
+    for hoc_sinh in ds_hoc_sinh:
+      ds_mon_hoc = list_mon_hoc()
+      for mon in ds_mon_hoc:
+        ds_diem = list_bang_diem_lop_hoc(mon.id, lop.id)
+        for diem in ds_diem:
+          
+  return None
 
 def list_lop_hoc():
   return db.session\
@@ -221,16 +232,16 @@ def tinh_diem_tb_hk1(self):
     total += self.diem_15p_hk1_5
   if self.diem_45p_hk1_1:
     count += 2
-    total += self.diem_45p_hk1_1
+    total += self.diem_45p_hk1_1 * 2
   if self.diem_45p_hk1_2:
     count += 2
-    total += self.diem_45p_hk1_2
+    total += self.diem_45p_hk1_2 * 2
   if self.diem_45p_hk1_3:
     count += 2
-    total += self.diem_45p_hk1_3
+    total += self.diem_45p_hk1_3 * 2
   if self.diem_thi_hk1:
     count += 3
-    total += self.diem_thi_hk1
+    total += self.diem_thi_hk1 * 3
   if count == 0: return 0
   return round(total / count, 2)
 
@@ -255,22 +266,23 @@ def tinh_diem_tb_hk2(self):
     total += self.diem_15p_hk2_5
   if self.diem_45p_hk2_1:
     count += 2
-    total += self.diem_45p_hk2_1
+    total += self.diem_45p_hk2_1 * 2
   if self.diem_45p_hk2_2:
     count += 2
-    total += self.diem_45p_hk2_2
+    total += self.diem_45p_hk2_2 * 2
   if self.diem_45p_hk2_3:
     count += 2
-    total += self.diem_45p_hk2_3
+    total += self.diem_45p_hk2_3 * 2
   if self.diem_thi_hk2:
     count += 3
-    total += self.diem_thi_hk2
+    total += self.diem_thi_hk2 * 3
   if count == 0: return 0
+  print("diem hk 2:",total,count)
   return round(total / count, 2)
 
 
 # Bang dien
-def list_bang_diem_lop_hoc(mon_hoc_id):
+def list_bang_diem_lop_hoc(mon_hoc_id, lop_hoc_id):
   ds_bang_diem = []
   for diem in db.session.query(
       Bang_diem.id,
@@ -294,7 +306,7 @@ def list_bang_diem_lop_hoc(mon_hoc_id):
       Bang_diem.diem_45p_hk2_2,
       Bang_diem.diem_45p_hk2_3,
       Bang_diem.diem_thi_hk2,
-  ).filter(Bang_diem.mon_hoc_id == mon_hoc_id).join(
+  ).filter(and_(Bang_diem.mon_hoc_id == mon_hoc_id, Hoc_sinh.lop_hoc_id == lop_hoc_id)).join(
       Hoc_sinh, Hoc_sinh.id.__eq__(Bang_diem.hoc_sinh_id)).all():
 
     ds_bang_diem.append({
