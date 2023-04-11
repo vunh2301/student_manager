@@ -80,7 +80,7 @@
         
       </div>
     </div>
-    <canvas id="myChart"></canvas>
+<!--     <canvas id="myChart"></canvas> -->
     <table class="table table-hover table-bordered table-sm">
       <thead class="table-light align-middle text-center">
         <tr>
@@ -98,6 +98,29 @@
         </tr>
       </thead>
       <tbody>
+        {% for lop in reports %}
+        <tr>
+          <td class="text-center">{{loop.index}}</td>
+          <td>
+            {{lop.name}}
+          </td>
+          <td>
+            {{lop.si_so}}
+          </td>
+          <td>
+            {{lop.sl_dat_hk_1}}
+          </td>
+          <td>
+            {{lop.tl_dat_hk_1}}
+          </td>
+          <td>
+            {{lop.sl_dat_hk_2}}
+          </td>
+          <td>
+            {{lop.tl_dat_hk_2}}
+          </td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

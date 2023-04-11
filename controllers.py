@@ -79,18 +79,62 @@ def json_list_lop_hoc():
     .join(Hoc_sinh, Hoc_sinh.lop_hoc_id.__eq__(Lop_hoc.id), isouter=True)\
     .group_by(Lop_hoc.id).all()]
 
-def report_lop_hoc():
+
+def report_lop_hoc(mon_hoc_id):
   reports = []
   ds_lop_hoc = list_lop_hoc()
   for lop in ds_lop_hoc:
-    ds_hoc_sinh = list_hoc_sinh(lop.id)
-    for hoc_sinh in ds_hoc_sinh:
-      ds_mon_hoc = list_mon_hoc()
-      for mon in ds_mon_hoc:
-        ds_diem = list_bang_diem_lop_hoc(mon.id, lop.id)
-        for diem in ds_diem:
-          
-  return None
+    sl_dat_hk_1 = 0
+    sl_dat_hk_2 = 0
+    tl_dat_hk_1 = 0
+    tl_dat_hk_2 = 0
+    print("lop:", lop.name)
+    if lop.si_so > 0:
+      ds_bang_diem = list_bang_diem_lop_hoc(mon_hoc_id, lop.id)
+      for bang_diem in ds_bang_diem:
+        print("hoc sinh", bang_diem["name"], bang_diem["tb_hk1"], bang_diem["tb_hk2"])
+        sl_dat_hk_1 = bang_diem["tb_hk1"]
+        sl_dat_hk_2 = bang_diem["tb_hk2"]
+        if sl_dat_hk_1 > 0:
+          tl_dat_hk_1 = round(sl_dat_hk_1 / lop.si_so * 100, 2)
+        if sl_dat_hk_2 > 0:
+          tl_dat_hk_2 = round(sl_dat_hk_2 / lop.si_so * 100, 2)
+      # for hoc_sinh in ds_hoc_sinh:
+      #   ds_mon_hoc = list_mon_hoc()
+      #   tb_hk_1 = 0
+      #   tb_hk_2 = 0
+      #   sl_mon = len(ds_mon_hoc)
+      #   print("hoc_sinh:", hoc_sinh.name)
+      #   #for mon in ds_mon_hoc:
+
+      #   ds_diem = list_bang_diem_lop_hoc(mon_hoc_id, lop.id)
+      #     #print("mon hoc:", mon.name)
+      #   for diem in ds_diem:
+      #     tb_hk_1 += diem["tb_hk1"]
+      #     tb_hk_2 += diem["tb_hk2"]
+      # print(tb_hk_1/sl_mon,tb_hk_2/sl_mon)
+      # if tb_hk_1/sl_mon >= 5:
+      #   sl_dat_hk_1 += 1
+      # if tb_hk_2/sl_mon >= 5:
+      #   sl_dat_hk_2 += 1
+
+    # if sl_dat_hk_1 > 0:
+    #   tl_dat_hk_1 = round(sl_dat_hk_1 / lop.si_so * 100, 2)
+    # if sl_dat_hk_2 > 0:
+    #   tl_dat_hk_2 = round(sl_dat_hk_2 / lop.si_so * 100, 2)
+    # print("sl dat:", sl_dat_hk_1, tl_dat_hk_1, sl_dat_hk_2, tl_dat_hk_2,
+    #       lop.si_so)
+    reports.append({
+      "id": lop.id,
+      "name": lop.name,
+      "si_so": lop.si_so,
+      "sl_dat_hk_1": sl_dat_hk_1,
+      "tl_dat_hk_1": tl_dat_hk_1,
+      "sl_dat_hk_2": sl_dat_hk_2,
+      "tl_dat_hk_2": tl_dat_hk_2
+    })
+  return reports
+
 
 def list_lop_hoc():
   return db.session\
@@ -277,7 +321,6 @@ def tinh_diem_tb_hk2(self):
     count += 3
     total += self.diem_thi_hk2 * 3
   if count == 0: return 0
-  print("diem hk 2:",total,count)
   return round(total / count, 2)
 
 
@@ -306,8 +349,10 @@ def list_bang_diem_lop_hoc(mon_hoc_id, lop_hoc_id):
       Bang_diem.diem_45p_hk2_2,
       Bang_diem.diem_45p_hk2_3,
       Bang_diem.diem_thi_hk2,
-  ).filter(and_(Bang_diem.mon_hoc_id == mon_hoc_id, Hoc_sinh.lop_hoc_id == lop_hoc_id)).join(
-      Hoc_sinh, Hoc_sinh.id.__eq__(Bang_diem.hoc_sinh_id)).all():
+  ).filter(
+      and_(Bang_diem.mon_hoc_id == mon_hoc_id,
+           Hoc_sinh.lop_hoc_id == lop_hoc_id)).join(
+             Hoc_sinh, Hoc_sinh.id.__eq__(Bang_diem.hoc_sinh_id)).all():
 
     ds_bang_diem.append({
       "id": diem.id,

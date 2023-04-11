@@ -1,12 +1,19 @@
 from flask import render_template, request, redirect, url_for
 from app import app, login
-from controllers import get_current_year, get_user_by_id, auth_user, list_mon_hoc, add_mon_hoc, update_mon_hoc, delete_mon_hoc, list_lop_hoc, add_lop_hoc, update_lop_hoc, delete_lop_hoc, list_hoc_sinh, add_hoc_sinh, update_hoc_sinh, delete_hoc_sinh, get_lop_hoc, json_list_lop_hoc, list_bang_diem_lop_hoc, update_dang_diem
+from controllers import get_current_year, get_user_by_id, auth_user, list_mon_hoc, add_mon_hoc, update_mon_hoc, delete_mon_hoc, list_lop_hoc, add_lop_hoc, update_lop_hoc, delete_lop_hoc, list_hoc_sinh, add_hoc_sinh, update_hoc_sinh, delete_hoc_sinh, get_lop_hoc, json_list_lop_hoc, list_bang_diem_lop_hoc, update_dang_diem, report_lop_hoc
 from flask_login import login_user, logout_user
 
 
 @app.route("/")
 def index():
-  return render_template('index.html')
+  ds_mon_hoc = list_mon_hoc()
+  mon_hoc = None
+  if len(ds_mon_hoc) > 0:
+    mon_hoc = ds_mon_hoc[0].id
+  if "mon_hoc" in request.args:
+    mon_hoc = int(request.args['mon_hoc'])
+  reports = report_lop_hoc(mon_hoc)
+  return render_template('index.html', reports=reports)
 
 
 @app.route("/login", methods=['POST'])
@@ -91,7 +98,8 @@ def trung_binh(lop_hoc_id):
   print(ds_bang_diem)
   return render_template('trung-binh.html',
                          ds_bang_diem=ds_bang_diem,
-                         lop_hoc=lop_hoc,mon_hoc=mon_hoc)
+                         lop_hoc=lop_hoc,
+                         mon_hoc=mon_hoc)
 
 
 @app.route("/lop-hoc/<int:lop_hoc_id>/bang-diem")
