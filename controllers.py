@@ -88,51 +88,34 @@ def report_lop_hoc(mon_hoc_id):
     sl_dat_hk_2 = 0
     tl_dat_hk_1 = 0
     tl_dat_hk_2 = 0
+    tb_hk_1 = 0
+    tb_hk_2 = 0
     print("lop:", lop.name)
     if lop.si_so > 0:
       ds_bang_diem = list_bang_diem_lop_hoc(mon_hoc_id, lop.id)
       for bang_diem in ds_bang_diem:
-        print("hoc sinh", bang_diem["name"], bang_diem["tb_hk1"], bang_diem["tb_hk2"])
-        sl_dat_hk_1 = bang_diem["tb_hk1"]
-        sl_dat_hk_2 = bang_diem["tb_hk2"]
-        if sl_dat_hk_1 > 0:
-          tl_dat_hk_1 = round(sl_dat_hk_1 / lop.si_so * 100, 2)
-        if sl_dat_hk_2 > 0:
-          tl_dat_hk_2 = round(sl_dat_hk_2 / lop.si_so * 100, 2)
-      # for hoc_sinh in ds_hoc_sinh:
-      #   ds_mon_hoc = list_mon_hoc()
-      #   tb_hk_1 = 0
-      #   tb_hk_2 = 0
-      #   sl_mon = len(ds_mon_hoc)
-      #   print("hoc_sinh:", hoc_sinh.name)
-      #   #for mon in ds_mon_hoc:
+        print("hoc sinh", bang_diem["name"], bang_diem["tb_hk1"],
+              bang_diem["tb_hk2"])
+        tb_hk_1 += bang_diem["tb_hk1"]
+        tb_hk_2 += bang_diem["tb_hk2"]
+        if tb_hk_1 >= 5:
+          sl_dat_hk_1 += 1
+        if tb_hk_2 >= 5:
+          sl_dat_hk_2 += 1
+      if sl_dat_hk_1 > 0:
+        tl_dat_hk_1 = round(sl_dat_hk_1 / lop.si_so * 100, 2)
+      if sl_dat_hk_2 > 0:
+        tl_dat_hk_2 = round(sl_dat_hk_2 / lop.si_so * 100, 2)
 
-      #   ds_diem = list_bang_diem_lop_hoc(mon_hoc_id, lop.id)
-      #     #print("mon hoc:", mon.name)
-      #   for diem in ds_diem:
-      #     tb_hk_1 += diem["tb_hk1"]
-      #     tb_hk_2 += diem["tb_hk2"]
-      # print(tb_hk_1/sl_mon,tb_hk_2/sl_mon)
-      # if tb_hk_1/sl_mon >= 5:
-      #   sl_dat_hk_1 += 1
-      # if tb_hk_2/sl_mon >= 5:
-      #   sl_dat_hk_2 += 1
-
-    # if sl_dat_hk_1 > 0:
-    #   tl_dat_hk_1 = round(sl_dat_hk_1 / lop.si_so * 100, 2)
-    # if sl_dat_hk_2 > 0:
-    #   tl_dat_hk_2 = round(sl_dat_hk_2 / lop.si_so * 100, 2)
-    # print("sl dat:", sl_dat_hk_1, tl_dat_hk_1, sl_dat_hk_2, tl_dat_hk_2,
-    #       lop.si_so)
-    reports.append({
-      "id": lop.id,
-      "name": lop.name,
-      "si_so": lop.si_so,
-      "sl_dat_hk_1": sl_dat_hk_1,
-      "tl_dat_hk_1": tl_dat_hk_1,
-      "sl_dat_hk_2": sl_dat_hk_2,
-      "tl_dat_hk_2": tl_dat_hk_2
-    })
+      reports.append({
+        "id": lop.id,
+        "name": lop.name,
+        "si_so": lop.si_so,
+        "sl_dat_hk_1": sl_dat_hk_1,
+        "tl_dat_hk_1": tl_dat_hk_1,
+        "sl_dat_hk_2": sl_dat_hk_2,
+        "tl_dat_hk_2": tl_dat_hk_2
+      })
   return reports
 
 

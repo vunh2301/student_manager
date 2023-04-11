@@ -11,7 +11,7 @@
   <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form method="post">
+        <form method="post" id="myForm" action="/lop-hoc/1">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="add">Thêm học sinh</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -127,7 +127,17 @@
 </div>
 
 <script>
-
+      function handleChangeLop2(ele){
+        var list_lop = JSON.parse(("{{json_ds_lop_hoc}}").replaceAll('&#34;', '"').replaceAll('&#39;', '"'));
+        let parent = ele.parentNode.parentNode;
+        let id = parent.querySelector('[name*="id"]').value;
+        let ngay_sinh = parent.querySelector('[name*="ngay_sinh"]')
+        let lop = list_lop.find(e=>e.id == id)
+        ngay_sinh.setAttribute("max", ({{current_year}} - lop.tuoi_toi_thieu) + "-01-01")
+        ngay_sinh.setAttribute("min", ({{current_year}} - lop.tuoi_toi_da) + "-12-31")
+        document.getElementById('myForm').setAttribute("action", "lop-hoc/" + id);
+        console.log({{current_year}} - lop.tuoi_toi_thieu, {{current_year}} - lop.tuoi_toi_da , list_lop)
+      }
   const handleChange = (field) => {
     let url = new URL(window.location.href);
     url.searchParams.set(field, document.getElementById(field).value);
