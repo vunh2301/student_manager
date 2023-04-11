@@ -34,6 +34,7 @@
     {% endif %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
       window.onload = function() {
         let dates = document.getElementsByClassName('datetime')
@@ -43,6 +44,30 @@
         for (let d of dateControls){
           d.value = moment(d.defaultValue).format("yyyy-MM-DD")
         }
+
+        // Vẽ biểu đồ doanh thu
+        const ctx = document.getElementById('myChart');
+        console.log(ctx)
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ["Lớp 10","Lớp 11","Lớp 12"],
+            datasets: [{
+              label: 'Học kỳ 1',
+              data: [10,20,40],
+              borderWidth: 1,
+              backgroundColor: ['red', 'green', 'blue', 'gold', 'brown']
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
       }
       window.onbeforeunload = function() {
         document.getElementById("loading").classList.remove("d-none");

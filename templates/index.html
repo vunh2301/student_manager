@@ -8,58 +8,107 @@
   </nav>
   <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add" >Tiếp nhận học sinh</button>
   <!-- Modal Update -->
-    <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <form method="post">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="add">Thêm học sinh</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="post">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="add">Thêm học sinh</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="name" class="form-label">Họ tên</label>
+              <input name="name" type="text" class="form-control" required>
             </div>
-            <div class="modal-body">
-              <div class="mb-3">
-                <label for="name" class="form-label">Họ tên</label>
-                <input name="name" type="text" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                <label for="lop_hoc_id" class="form-label">Lớp</label>
-                <select name="lop_hoc_id" class="form-select" onChange="handleChangeLop(this)" required>
-                  {% for option in common_ds_lop_hoc %}
-                    <option value="{{option.id}}" {% if option.sl_toi_da == option.si_so %}disabled{% endif %} >{{option.name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="gioi_tinh" class="form-label">Giới tính</label>
-                <select name="gioi_tinh" class="form-select" required>
-                  <option value="nam">Nam</option>
-                  <option value="nu">Nữ</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="ngay_sinh" class="form-label">Ngày sinh</label>
-                <input name="ngay_sinh" type="date" class="form-control datepicker" required>
-              </div>
-              <div class="mb-3">
-                <label for="dia_chi" class="form-label">Địa chỉ</label>
-                <textarea name="dia_chi" type="text" class="form-control" rows="3" required></textarea>
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input name="email" type="email" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                <label for="sdt" class="form-label">Số điện thoại</label>
-                <input name="sdt" type="text" class="form-control" required>
-              </div>
+            <div class="mb-3">
+              <label for="lop_hoc_id" class="form-label">Lớp</label>
+              <select name="lop_hoc_id" class="form-select" onChange="handleChangeLop(this)" required>
+                {% for option in common_ds_lop_hoc %}
+                  <option value="{{option.id}}" {% if option.sl_toi_da == option.si_so %}disabled{% endif %} >{{option.name}}</option>
+                {% endfor %}
+              </select>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-              <button class="btn btn-primary" type="submit">Thêm</button>
+            <div class="mb-3">
+              <label for="gioi_tinh" class="form-label">Giới tính</label>
+              <select name="gioi_tinh" class="form-select" required>
+                <option value="nam">Nam</option>
+                <option value="nu">Nữ</option>
+              </select>
             </div>
-          </form>
-        </div>
+            <div class="mb-3">
+              <label for="ngay_sinh" class="form-label">Ngày sinh</label>
+              <input name="ngay_sinh" type="date" class="form-control datepicker" required>
+            </div>
+            <div class="mb-3">
+              <label for="dia_chi" class="form-label">Địa chỉ</label>
+              <textarea name="dia_chi" type="text" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input name="email" type="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="sdt" class="form-label">Số điện thoại</label>
+              <input name="sdt" type="text" class="form-control" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            <button class="btn btn-primary" type="submit">Thêm</button>
+          </div>
+        </form>
       </div>
     </div>
+  </div>
+  <h3 class="my-3">Thống kê: Tổng kết môn</h3>
+  <div class="table-responsive">
+    <div class="d-flex justify-content-between py-3">
+      <div>
+        <strong>Môn hoc: </strong> <select class="form-select form-select-sm d-inline" style="width: 200px;" id="mon_hoc" onchange="handleChange('mon_hoc')">
+          {% for option in common_ds_mon_hoc %}    
+          <option value="{{option.id}}" {% if mon_hoc == option.id %}selected{% endif %}>{{option.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <strong>Năm học: </strong> <select class="form-select form-select-sm d-inline" style="width: 200px;" id="nam_hoc" onchange="handleChange('nam_hoc')">
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+        </select>
+        
+      </div>
+    </div>
+    <canvas id="myChart"></canvas>
+    <table class="table table-hover table-bordered table-sm">
+      <thead class="table-light align-middle text-center">
+        <tr>
+          <th scope="col" rowspan="2" >STT</th>
+          <th scope="col" rowspan="2" style="min-width: 150px;">Lớp</th>
+          <th scope="col" rowspan="2" class="text-center" >Sĩ số</th>
+          <th scope="col" class="text-center" colspan="2">Học kỳ 1</th>
+          <th scope="col" class="text-center" colspan="2">Học kỳ 2</th>
+        </tr>
+        <tr>
+          <th scope="col" class="text-center" >Số lượng đạt</th>
+          <th scope="col" class="text-center" >Tỷ lệ đạt</th>
+          <th scope="col" class="text-center" >Số lượng đạt</th>
+          <th scope="col" class="text-center" >Tỷ lệ đạt</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<script>
+
+  const handleChange = (field) => {
+    let url = new URL(window.location.href);
+    url.searchParams.set(field, document.getElementById(field).value);
+    window.location = url.href;
+  }
+</script>
 {% endblock %}

@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for
 from app import app, login
-from controllers import get_current_year, get_user_by_id, auth_user, list_mon_hoc, add_mon_hoc, update_mon_hoc, delete_mon_hoc, list_lop_hoc, add_lop_hoc, update_lop_hoc, delete_lop_hoc, list_hoc_sinh, add_hoc_sinh, update_hoc_sinh, delete_hoc_sinh, get_lop_hoc, json_list_lop_hoc, list_bang_diem_lop_hoc
+from controllers import get_current_year, get_user_by_id, auth_user, list_mon_hoc, add_mon_hoc, update_mon_hoc, delete_mon_hoc, list_lop_hoc, add_lop_hoc, update_lop_hoc, delete_lop_hoc, list_hoc_sinh, add_hoc_sinh, update_hoc_sinh, delete_hoc_sinh, get_lop_hoc, json_list_lop_hoc, list_bang_diem_lop_hoc, update_dang_diem
 from flask_login import login_user, logout_user
 
 
@@ -80,8 +80,14 @@ def lop_hoc_detail(lop_hoc_id):
 @app.route("/lop-hoc/<int:lop_hoc_id>/trung-binh")
 def trung_binh(lop_hoc_id):
   lop_hoc = get_lop_hoc(lop_hoc_id)
-  ds_hoc_sinh = list_hoc_sinh(lop_hoc_id)
-  ds_bang_diem = list_bang_diem_lop_hoc(1)
+  ds_mon_hoc = list_mon_hoc()
+  mon_hoc = None
+  if len(ds_mon_hoc) > 0:
+    mon_hoc = ds_mon_hoc[0].id
+  if "mon_hoc" in request.args:
+    mon_hoc = int(request.args['mon_hoc'])
+
+  ds_bang_diem = list_bang_diem_lop_hoc(mon_hoc)
   print(ds_bang_diem)
   return render_template('trung-binh.html',
                          ds_bang_diem=ds_bang_diem,
@@ -92,36 +98,57 @@ def trung_binh(lop_hoc_id):
 def bang_diem(lop_hoc_id):
   ds_mon_hoc = list_mon_hoc()
   lop_hoc = get_lop_hoc(lop_hoc_id)
-  ds_hoc_sinh = list_hoc_sinh(lop_hoc_id)
   mon_hoc = None
-  hoc_ky = None
+  if len(ds_mon_hoc) > 0:
+    mon_hoc = ds_mon_hoc[0].id
   if "mon_hoc" in request.args:
     mon_hoc = int(request.args['mon_hoc'])
-  if "hoc_ky" in request.args:
-    hoc_ky = int(request.args['hoc_ky'])
+
+  ds_bang_diem_lop_hoc = list_bang_diem_lop_hoc(mon_hoc)
 
   return render_template('bang-diem.html',
                          ds_mon_hoc=ds_mon_hoc,
                          lop_hoc=lop_hoc,
                          mon_hoc=mon_hoc,
-                         hoc_ky=hoc_ky,
-                         ds_hoc_sinh=ds_hoc_sinh)
+                         ds_bang_diem_lop_hoc=ds_bang_diem_lop_hoc)
 
 
 @app.route("/lop-hoc/<int:lop_hoc_id>/bang-diem", methods=['POST'])
 def process_bang_diem(lop_hoc_id):
-  ds_hoc_sinh = list_hoc_sinh(lop_hoc_id)
-  # diem_15p_hk1_1 = request.form.getlist()
-  # list_diem_hoc_sinh = request.form.items(multi=True)
-  # print("list_diem_hoc_sinh: ", list_diem_hoc_sinh)
-  # for x, y in list_diem_hoc_sinh:
-  #   print(x, y)
-  for hoc_sinh in ds_hoc_sinh:
-    print(
-      str(hoc_sinh.id) + '[diem_15p_hk1_1]',
-      request.form.getlist(str(hoc_sinh.id) + '[diem_15p_hk1_1]')[0])
+  ds_mon_hoc = list_mon_hoc()
+  mon_hoc = None
+  if len(ds_mon_hoc) > 0:
+    mon_hoc = ds_mon_hoc[0].id
+  if "mon_hoc" in request.args:
+    mon_hoc = int(request.args['mon_hoc'])
+  print("list_diem_hoc_sinh: ", request.form.getlist("id[]"))
+  for idx, id in enumerate(request.form.getlist("id[]")):
+    bang_diem = {
+      "id": id,
+      "hoc_sinh_id": request.form.getlist("hoc_sinh_id[]")[idx],
+      "diem_15p_hk1_1": request.form.getlist("diem_15p_hk1_1[]")[idx],
+      "diem_15p_hk1_2": request.form.getlist("diem_15p_hk1_2[]")[idx],
+      "diem_15p_hk1_3": request.form.getlist("diem_15p_hk1_3[]")[idx],
+      "diem_15p_hk1_4": request.form.getlist("diem_15p_hk1_4[]")[idx],
+      "diem_15p_hk1_5": request.form.getlist("diem_15p_hk1_5[]")[idx],
+      "diem_45p_hk1_1": request.form.getlist("diem_45p_hk1_1[]")[idx],
+      "diem_45p_hk1_2": request.form.getlist("diem_45p_hk1_2[]")[idx],
+      "diem_45p_hk1_3": request.form.getlist("diem_45p_hk1_3[]")[idx],
+      "diem_thi_hk1": request.form.getlist("diem_thi_hk1[]")[idx],
+      "diem_15p_hk2_1": request.form.getlist("diem_15p_hk2_1[]")[idx],
+      "diem_15p_hk2_2": request.form.getlist("diem_15p_hk2_2[]")[idx],
+      "diem_15p_hk2_3": request.form.getlist("diem_15p_hk2_3[]")[idx],
+      "diem_15p_hk2_4": request.form.getlist("diem_15p_hk2_4[]")[idx],
+      "diem_15p_hk2_5": request.form.getlist("diem_15p_hk2_5[]")[idx],
+      "diem_45p_hk2_1": request.form.getlist("diem_45p_hk2_1[]")[idx],
+      "diem_45p_hk2_2": request.form.getlist("diem_45p_hk2_2[]")[idx],
+      "diem_45p_hk2_3": request.form.getlist("diem_45p_hk2_3[]")[idx],
+      "diem_thi_hk2": request.form.getlist("diem_thi_hk2[]")[idx]
+    }
+    update_dang_diem(bang_diem)
 
-  return redirect("/lop-hoc/" + str(lop_hoc_id) + "/bang-diem")
+  return redirect("/lop-hoc/" + str(lop_hoc_id) + "/bang-diem?mon_hoc=" +
+                  str(mon_hoc))
 
 
 @app.route("/lop-hoc/<int:lop_hoc_id>", methods=['POST'])

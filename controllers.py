@@ -201,13 +201,178 @@ def delete_hoc_sinh(id):
   return None
 
 
+def tinh_diem_tb_hk1(self):
+  count = 0
+  total = 0
+  if self.diem_15p_hk1_1:
+    count += 1
+    total += self.diem_15p_hk1_1
+  if self.diem_15p_hk1_2:
+    count += 1
+    total += self.diem_15p_hk1_2
+  if self.diem_15p_hk1_3:
+    count += 1
+    total += self.diem_15p_hk1_3
+  if self.diem_15p_hk1_4:
+    count += 1
+    total += self.diem_15p_hk1_4
+  if self.diem_15p_hk1_5:
+    count += 1
+    total += self.diem_15p_hk1_5
+  if self.diem_45p_hk1_1:
+    count += 2
+    total += self.diem_45p_hk1_1
+  if self.diem_45p_hk1_2:
+    count += 2
+    total += self.diem_45p_hk1_2
+  if self.diem_45p_hk1_3:
+    count += 2
+    total += self.diem_45p_hk1_3
+  if self.diem_thi_hk1:
+    count += 3
+    total += self.diem_thi_hk1
+  if count == 0: return 0
+  return round(total / count, 2)
+
+
+def tinh_diem_tb_hk2(self):
+  count = 0
+  total = 0
+  if self.diem_15p_hk2_1:
+    count += 1
+    total += self.diem_15p_hk2_1
+  if self.diem_15p_hk2_2:
+    count += 1
+    total += self.diem_15p_hk2_2
+  if self.diem_15p_hk2_3:
+    count += 1
+    total += self.diem_15p_hk2_3
+  if self.diem_15p_hk2_4:
+    count += 1
+    total += self.diem_15p_hk2_4
+  if self.diem_15p_hk2_5:
+    count += 1
+    total += self.diem_15p_hk2_5
+  if self.diem_45p_hk2_1:
+    count += 2
+    total += self.diem_45p_hk2_1
+  if self.diem_45p_hk2_2:
+    count += 2
+    total += self.diem_45p_hk2_2
+  if self.diem_45p_hk2_3:
+    count += 2
+    total += self.diem_45p_hk2_3
+  if self.diem_thi_hk2:
+    count += 3
+    total += self.diem_thi_hk2
+  if count == 0: return 0
+  return round(total / count, 2)
+
+
 # Bang dien
 def list_bang_diem_lop_hoc(mon_hoc_id):
-  ds_bang_diem = db.session.query(
-    Bang_diem, Hoc_sinh.name).filter(Bang_diem.mon_hoc_id == mon_hoc_id).join(
-      Hoc_sinh, Hoc_sinh.id.__eq__(Bang_diem.hoc_sinh_id)).all()
+  ds_bang_diem = []
+  for diem in db.session.query(
+      Bang_diem.id,
+      Bang_diem.hoc_sinh_id,
+      Hoc_sinh.name,
+      Bang_diem.diem_15p_hk1_1,
+      Bang_diem.diem_15p_hk1_2,
+      Bang_diem.diem_15p_hk1_3,
+      Bang_diem.diem_15p_hk1_4,
+      Bang_diem.diem_15p_hk1_5,
+      Bang_diem.diem_45p_hk1_1,
+      Bang_diem.diem_45p_hk1_2,
+      Bang_diem.diem_45p_hk1_3,
+      Bang_diem.diem_thi_hk1,
+      Bang_diem.diem_15p_hk2_1,
+      Bang_diem.diem_15p_hk2_2,
+      Bang_diem.diem_15p_hk2_3,
+      Bang_diem.diem_15p_hk2_4,
+      Bang_diem.diem_15p_hk2_5,
+      Bang_diem.diem_45p_hk2_1,
+      Bang_diem.diem_45p_hk2_2,
+      Bang_diem.diem_45p_hk2_3,
+      Bang_diem.diem_thi_hk2,
+  ).filter(Bang_diem.mon_hoc_id == mon_hoc_id).join(
+      Hoc_sinh, Hoc_sinh.id.__eq__(Bang_diem.hoc_sinh_id)).all():
 
+    ds_bang_diem.append({
+      "id": diem.id,
+      "hoc_sinh_id": diem.hoc_sinh_id,
+      "name": diem.name,
+      "diem_15p_hk1_1": diem.diem_15p_hk1_1,
+      "diem_15p_hk1_2": diem.diem_15p_hk1_2,
+      "diem_15p_hk1_3": diem.diem_15p_hk1_3,
+      "diem_15p_hk1_4": diem.diem_15p_hk1_4,
+      "diem_15p_hk1_5": diem.diem_15p_hk1_5,
+      "diem_45p_hk1_1": diem.diem_45p_hk1_1,
+      "diem_45p_hk1_2": diem.diem_45p_hk1_2,
+      "diem_45p_hk1_3": diem.diem_45p_hk1_3,
+      "diem_thi_hk1": diem.diem_thi_hk1,
+      "diem_15p_hk2_1": diem.diem_15p_hk2_1,
+      "diem_15p_hk2_2": diem.diem_15p_hk2_2,
+      "diem_15p_hk2_3": diem.diem_15p_hk2_3,
+      "diem_15p_hk2_4": diem.diem_15p_hk2_4,
+      "diem_15p_hk2_5": diem.diem_15p_hk2_5,
+      "diem_45p_hk2_1": diem.diem_45p_hk2_1,
+      "diem_45p_hk2_2": diem.diem_45p_hk2_2,
+      "diem_45p_hk2_3": diem.diem_45p_hk2_3,
+      "diem_thi_hk2": diem.diem_thi_hk2,
+      "tb_hk1": tinh_diem_tb_hk1(diem),
+      "tb_hk2": tinh_diem_tb_hk2(diem)
+    })
   return ds_bang_diem
+
+
+def parseInt(num):
+  variable = int(num) if num else None
+  return variable
+
+
+def update_dang_diem(bang_diem):
+  print(bang_diem["id"])
+
+  db.session.query(Bang_diem).filter(Bang_diem.id == bang_diem["id"]).update({
+    Bang_diem.diem_15p_hk1_1:
+    parseInt(bang_diem["diem_15p_hk1_1"]),
+    Bang_diem.diem_15p_hk1_2:
+    parseInt(bang_diem["diem_15p_hk1_2"]),
+    Bang_diem.diem_15p_hk1_3:
+    parseInt(bang_diem["diem_15p_hk1_3"]),
+    Bang_diem.diem_15p_hk1_4:
+    parseInt(bang_diem["diem_15p_hk1_4"]),
+    Bang_diem.diem_15p_hk1_5:
+    parseInt(bang_diem["diem_15p_hk1_5"]),
+    Bang_diem.diem_45p_hk1_1:
+    parseInt(bang_diem["diem_45p_hk1_1"]),
+    Bang_diem.diem_45p_hk1_2:
+    parseInt(bang_diem["diem_45p_hk1_2"]),
+    Bang_diem.diem_45p_hk1_3:
+    parseInt(bang_diem["diem_45p_hk1_3"]),
+    Bang_diem.diem_thi_hk1:
+    parseInt(bang_diem["diem_thi_hk1"]),
+    Bang_diem.diem_15p_hk2_1:
+    parseInt(bang_diem["diem_15p_hk2_1"]),
+    Bang_diem.diem_15p_hk2_2:
+    parseInt(bang_diem["diem_15p_hk2_2"]),
+    Bang_diem.diem_15p_hk2_3:
+    parseInt(bang_diem["diem_15p_hk2_3"]),
+    Bang_diem.diem_15p_hk2_4:
+    parseInt(bang_diem["diem_15p_hk2_4"]),
+    Bang_diem.diem_15p_hk2_5:
+    parseInt(bang_diem["diem_15p_hk2_5"]),
+    Bang_diem.diem_45p_hk2_1:
+    parseInt(bang_diem["diem_45p_hk2_1"]),
+    Bang_diem.diem_45p_hk2_2:
+    parseInt(bang_diem["diem_45p_hk2_2"]),
+    Bang_diem.diem_45p_hk2_3:
+    parseInt(bang_diem["diem_45p_hk2_3"]),
+    Bang_diem.diem_thi_hk2:
+    parseInt(bang_diem["diem_thi_hk2"]),
+  })
+  db.session.commit()
+  return None
 
 
 def list_diem_trung_binh(lop_hoc_id):

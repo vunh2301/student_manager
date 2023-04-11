@@ -38,8 +38,8 @@
           <tr>
             <th scope="col" >STT</th>
             <th scope="col" style="min-width: 200px;">Họ tên</th>
-            <th scope="col" >Điểm TB HK 1</th>
-            <th scope="col" >Điểm TB HK 2</th>
+            <th scope="col" class="text-center" >Điểm TB HK 1</th>
+            <th scope="col" class="text-center" >Điểm TB HK 2</th>
           </tr>
         </thead>
         <tbody>
@@ -47,11 +47,10 @@
             <tr>
               <td class="text-center">{{loop.index}}</td>
               <td>{{item.name}}</td>
-              <td>{{item.id}}</td>
-              <td>{{item.total}}</td>
+              <td class="text-center"><span class="badge rounded-pill text-bg-primary">{{item.tb_hk1}}</span></td>
+              <td class="text-center"><span class="badge rounded-pill text-bg-primary">{{item.tb_hk2}}</span></td>
             </tr>
           {% endfor %}
-          {{ds_bang_diem}}
         </tbody>
       </table>
       <div class="d-flex justify-content-between py-3">
