@@ -388,7 +388,6 @@ def parseInt(num):
 
 
 def update_dang_diem(bang_diem):
-  print(bang_diem["id"])
 
   db.session.query(Bang_diem).filter(Bang_diem.id == bang_diem["id"]).update({
     Bang_diem.diem_15p_hk1_1:

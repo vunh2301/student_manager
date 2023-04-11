@@ -1,8 +1,6 @@
-from sqlalchemy import Column, String, Integer, DateTime, func
+from sqlalchemy import Column, String, Integer, DateTime
 from app import db, app
 from flask_login import UserMixin
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.sql import case
 
 
 # Define Model

@@ -34,7 +34,7 @@ def logout():
   return redirect("/")
 
 
-@app.route("/mon-hoc")
+@app.route("/mon-hoc", methods=['GET'])
 def mon_hoc():
   if "search" in request.args:
     kw = request.args['search']
@@ -67,11 +67,32 @@ def process_mon_hoc():
   return redirect(url_for("mon_hoc", messages=messages))
 
 
-@app.route("/lop-hoc")
+@app.route("/lop-hoc", methods=['GET'])
 def lop_hoc():
   lop_hoc = list_lop_hoc()
   return render_template('lop-hoc.html', lop_hoc=lop_hoc)
 
+
+@app.route("/lop-hoc", methods=['POST'])
+def process_lop_hoc():
+  if 'apply_all' in request.form:
+    apply_all = request.form['apply_all']
+  else:
+    apply_all = None
+  if "id" in request.form:  #Cập Nhật
+    update_lop_hoc(request.form['id'], request.form['name'],
+                   request.form['khoi_lop'], request.form['nam_hoc'],
+                   request.form['sl_toi_da'], request.form['tuoi_toi_thieu'],
+                   request.form['tuoi_toi_da'], apply_all)
+  elif "delete" in request.form:  #Xoá
+    delete_lop_hoc(request.form['delete'])
+  else:  #Thêm mới
+    add_lop_hoc(request.form['name'], request.form['khoi_lop'],
+                request.form['nam_hoc'], request.form['sl_toi_da'],
+                request.form['tuoi_toi_thieu'], request.form['tuoi_toi_da'],
+                apply_all)
+
+  return redirect("/lop-hoc")
 
 @app.route("/lop-hoc/<int:lop_hoc_id>")
 def lop_hoc_detail(lop_hoc_id):
@@ -83,26 +104,7 @@ def lop_hoc_detail(lop_hoc_id):
                          ds_hoc_sinh=ds_hoc_sinh,
                          ds_lop_hoc=ds_lop_hoc)
 
-
-@app.route("/lop-hoc/<int:lop_hoc_id>/trung-binh")
-def trung_binh(lop_hoc_id):
-  lop_hoc = get_lop_hoc(lop_hoc_id)
-  ds_mon_hoc = list_mon_hoc()
-  mon_hoc = None
-  if len(ds_mon_hoc) > 0:
-    mon_hoc = ds_mon_hoc[0].id
-  if "mon_hoc" in request.args:
-    mon_hoc = int(request.args['mon_hoc'])
-
-  ds_bang_diem = list_bang_diem_lop_hoc(mon_hoc, lop_hoc_id)
-  print(ds_bang_diem)
-  return render_template('trung-binh.html',
-                         ds_bang_diem=ds_bang_diem,
-                         lop_hoc=lop_hoc,
-                         mon_hoc=mon_hoc)
-
-
-@app.route("/lop-hoc/<int:lop_hoc_id>/bang-diem")
+@app.route("/lop-hoc/<int:lop_hoc_id>/bang-diem", methods=['GET'])
 def bang_diem(lop_hoc_id):
   ds_mon_hoc = list_mon_hoc()
   lop_hoc = get_lop_hoc(lop_hoc_id)
@@ -159,6 +161,25 @@ def process_bang_diem(lop_hoc_id):
                   str(mon_hoc))
 
 
+
+@app.route("/lop-hoc/<int:lop_hoc_id>/trung-binh")
+def trung_binh(lop_hoc_id):
+  lop_hoc = get_lop_hoc(lop_hoc_id)
+  ds_mon_hoc = list_mon_hoc()
+  mon_hoc = None
+  if len(ds_mon_hoc) > 0:
+    mon_hoc = ds_mon_hoc[0].id
+  if "mon_hoc" in request.args:
+    mon_hoc = int(request.args['mon_hoc'])
+
+  ds_bang_diem = list_bang_diem_lop_hoc(mon_hoc, lop_hoc_id)
+  return render_template('trung-binh.html',
+                         ds_bang_diem=ds_bang_diem,
+                         lop_hoc=lop_hoc,
+                         mon_hoc=mon_hoc)
+
+
+
 @app.route("/lop-hoc/<int:lop_hoc_id>", methods=['POST'])
 def process_lop_hoc_detail(lop_hoc_id):
   if "id" in request.form:  #Cập Nhật
@@ -175,29 +196,6 @@ def process_lop_hoc_detail(lop_hoc_id):
                  request.form['sdt'])
 
   return redirect("/lop-hoc/" + str(lop_hoc_id))
-
-
-@app.route("/lop-hoc", methods=['POST'])
-def process_lop_hoc():
-  if 'apply_all' in request.form:
-    apply_all = request.form['apply_all']
-  else:
-    apply_all = None
-  if "id" in request.form:  #Cập Nhật
-    update_lop_hoc(request.form['id'], request.form['name'],
-                   request.form['khoi_lop'], request.form['nam_hoc'],
-                   request.form['sl_toi_da'], request.form['tuoi_toi_thieu'],
-                   request.form['tuoi_toi_da'], apply_all)
-  elif "delete" in request.form:  #Xoá
-    delete_lop_hoc(request.form['delete'])
-  else:  #Thêm mới
-    add_lop_hoc(request.form['name'], request.form['khoi_lop'],
-                request.form['nam_hoc'], request.form['sl_toi_da'],
-                request.form['tuoi_toi_thieu'], request.form['tuoi_toi_da'],
-                apply_all)
-
-  return redirect("/lop-hoc")
-
 
 @login.user_loader
 def user_loader(user_id):
