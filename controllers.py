@@ -1,6 +1,7 @@
 from models import Mon_hoc, Lop_hoc, Hoc_sinh, Bang_diem, User
 from app import db
 from sqlalchemy import func
+from flask import jsonify
 import hashlib
 import datetime
 
@@ -30,8 +31,11 @@ def add_user(name, username, password):
 
 
 # Môn học
-def list_mon_hoc():
-  return Mon_hoc.query.all()
+def list_mon_hoc(kw=None):
+  if kw:
+    return Mon_hoc.query.filter(Mon_hoc.name.contains(kw)).all()
+  else:
+    return Mon_hoc.query.all()
 
 
 def get_mon_hoc(id):
@@ -62,6 +66,21 @@ def delete_mon_hoc(id):
 
 
 # Lớp học
+
+
+def json_list_lop_hoc():
+  return [{
+    "id": lop.id,
+    "sl_toi_da": lop.sl_toi_da,
+    "tuoi_toi_thieu": lop.tuoi_toi_thieu,
+    "tuoi_toi_da": lop.tuoi_toi_da,
+    "si_so": lop.si_so
+  } for lop in db.session\
+    .query(Lop_hoc.id, Lop_hoc.sl_toi_da, Lop_hoc.tuoi_toi_thieu, Lop_hoc.tuoi_toi_da, func.count(Hoc_sinh.lop_hoc_id).label('si_so'))\
+    .join(Hoc_sinh, Hoc_sinh.lop_hoc_id.__eq__(Lop_hoc.id), isouter=True)\
+    .group_by(Lop_hoc.id).all()]
+
+
 def list_lop_hoc():
   return db.session\
     .query(Lop_hoc.id, Lop_hoc.name, Lop_hoc.khoi_lop, Lop_hoc.nam_hoc, Lop_hoc.sl_toi_da, Lop_hoc.tuoi_toi_thieu, Lop_hoc.tuoi_toi_da, func.count(Hoc_sinh.lop_hoc_id).label('si_so'))\
@@ -183,9 +202,19 @@ def delete_hoc_sinh(id):
 
 
 # Bang dien
-def list_bang_diem_lop_hoc():
+def list_bang_diem_lop_hoc(mon_hoc_id):
+  ds_bang_diem = db.session.query(
+    Bang_diem, Hoc_sinh.name).filter(Bang_diem.mon_hoc_id == mon_hoc_id).join(
+      Hoc_sinh, Hoc_sinh.id.__eq__(Bang_diem.hoc_sinh_id)).all()
 
-  return None
+  return ds_bang_diem
+
+
+def list_diem_trung_binh(lop_hoc_id):
+  return db.session\
+    .query(Hoc_sinh.id, Hoc_sinh.name, Hoc_sinh.lop_hoc_id, func.count(Hoc_sinh.lop_hoc_id).label('si_so'))\
+    .join(Hoc_sinh, Hoc_sinh.lop_hoc_id.__eq__(Lop_hoc.id), isouter=True)\
+    .group_by(Lop_hoc.id).all()
 
 
 # from add mon hoc

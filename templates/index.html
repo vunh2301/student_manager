@@ -6,5 +6,60 @@
       <li class="breadcrumb-item" aria-current="page">Trang chủ</li>
     </ol>
   </nav>
+  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add" >Tiếp nhận học sinh</button>
+  <!-- Modal Update -->
+    <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form method="post">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="add">Thêm học sinh</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="name" class="form-label">Họ tên</label>
+                <input name="name" type="text" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label for="lop_hoc_id" class="form-label">Lớp</label>
+                <select name="lop_hoc_id" class="form-select" onChange="handleChangeLop(this)" required>
+                  {% for option in common_ds_lop_hoc %}
+                    <option value="{{option.id}}" {% if option.sl_toi_da == option.si_so %}disabled{% endif %} >{{option.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="gioi_tinh" class="form-label">Giới tính</label>
+                <select name="gioi_tinh" class="form-select" required>
+                  <option value="nam">Nam</option>
+                  <option value="nu">Nữ</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="ngay_sinh" class="form-label">Ngày sinh</label>
+                <input name="ngay_sinh" type="date" class="form-control datepicker" required>
+              </div>
+              <div class="mb-3">
+                <label for="dia_chi" class="form-label">Địa chỉ</label>
+                <textarea name="dia_chi" type="text" class="form-control" rows="3" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input name="email" type="email" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label for="sdt" class="form-label">Số điện thoại</label>
+                <input name="sdt" type="text" class="form-control" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+              <button class="btn btn-primary" type="submit">Thêm</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 </div>
 {% endblock %}

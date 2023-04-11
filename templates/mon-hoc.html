@@ -24,11 +24,27 @@
       </div>
     </div>
   </div>
+  {% if messages == "Created" %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+  Thêm môn học thành công
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif messages == "Updated" %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    Cập nhật môn học thành công
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif messages == "Deleted" %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    Xoá môn học thành công
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
   <div class="table-responsive">
       <div class="d-flex justify-content-between py-3">
         <div>
 <form class="input-group mb-3">
-  <input name="search" type="text" class="form-control" placeholder="Tìm môn học" aria-label="Tìm môn học" aria-describedby="button-addon2">
+  <input name="search" type="text" value="{{kw}}" class="form-control" placeholder="Tìm môn học" aria-label="Tìm môn học" aria-describedby="button-addon2">
   <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Tìm</button>
 </form>
         </div>

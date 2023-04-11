@@ -40,7 +40,7 @@
         <div class="modal-content">
           <form method="post">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="add">Thêm học sinh</h1>
+              <h1 class="modal-title fs-5" id="add">Tiếp nhận học sinh</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -50,9 +50,9 @@
               </div>
               <div class="mb-3">
                 <label for="lop_hoc_id" class="form-label">Lớp</label>
-                <select name="lop_hoc_id" class="form-select" readonly required>
+                <select name="lop_hoc_id" class="form-select" onChange="handleChangeLop(this)" required>
                   {% for option in ds_lop_hoc %}
-                    <option value="{{option.id}}" {% if lop_hoc.id == option.id %}selected{% endif %}>{{option.name}}</option>
+                    <option value="{{option.id}}" {% if lop_hoc.id == option.id %}selected{% endif %} {% if option.sl_toi_da == option.si_so %}disabled{% endif %} >{{option.name}}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -140,9 +140,9 @@
               </div>
               <div class="mb-3">
                 <label for="lop_hoc_id" class="form-label">Lớp</label>
-                <select name="lop_hoc_id" class="form-select" readonly required>
+                <select name="lop_hoc_id" class="form-select" onChange="handleChangeLop(this)" required>
                   {% for option in ds_lop_hoc %}
-                    <option value="{{option.id}}" {% if item.lop_hoc_id == option.id %}selected{% endif %}>{{option.name}}</option>
+                    <option value="{{option.id}}" {% if item.lop_hoc_id == option.id %}selected{% endif %} {% if option.sl_toi_da <= option.si_so and item.lop_hoc_id != option.id%}disabled{% endif %}>{{option.name}}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -155,7 +155,7 @@
               </div>
               <div class="mb-3">
                 <label for="ngay_sinh" class="form-label">Ngày sinh</label>
-                <input name="ngay_sinh" type="date" class="form-control datepicker" value="{{item.ngay_sinh}}" min="{{current_year-lop_hoc.tuoi_toi_thieu}}-01-01" max="{{current_year-lop_hoc.tuoi_toi_da}}-12-31" required>
+                <input name="ngay_sinh" type="date" class="form-control datepicker" value="{{item.ngay_sinh}}" max="{{current_year-lop_hoc.tuoi_toi_thieu}}-01-01" min="{{current_year-lop_hoc.tuoi_toi_da}}-12-31" required>
               </div>
               <div class="mb-3">
                 <label for="dia_chi" class="form-label">Địa chỉ</label>
@@ -181,5 +181,3 @@
     {% endfor %}
   </div>
   {% endblock %}
-  
-  </div>

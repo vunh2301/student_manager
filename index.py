@@ -1,6 +1,6 @@
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, url_for
 from app import app, login
-from controllers import get_current_year, get_user_by_id, auth_user, list_mon_hoc, add_mon_hoc, update_mon_hoc, delete_mon_hoc, list_lop_hoc, add_lop_hoc, update_lop_hoc, delete_lop_hoc, list_hoc_sinh, add_hoc_sinh, update_hoc_sinh, delete_hoc_sinh, get_lop_hoc
+from controllers import get_current_year, get_user_by_id, auth_user, list_mon_hoc, add_mon_hoc, update_mon_hoc, delete_mon_hoc, list_lop_hoc, add_lop_hoc, update_lop_hoc, delete_lop_hoc, list_hoc_sinh, add_hoc_sinh, update_hoc_sinh, delete_hoc_sinh, get_lop_hoc, json_list_lop_hoc, list_bang_diem_lop_hoc
 from flask_login import login_user, logout_user
 
 
@@ -29,20 +29,35 @@ def logout():
 
 @app.route("/mon-hoc")
 def mon_hoc():
-  mon_hoc = list_mon_hoc()
-  return render_template('mon-hoc.html', mon_hoc=mon_hoc)
+  if "search" in request.args:
+    kw = request.args['search']
+    mon_hoc = list_mon_hoc(kw)
+  else:
+    kw = ""
+    mon_hoc = list_mon_hoc(None)
+  if "messages" in request.args:
+    messages = request.args['messages']
+  else:
+    messages = ""
+  return render_template('mon-hoc.html',
+                         mon_hoc=mon_hoc,
+                         kw=kw,
+                         messages=messages)
 
 
 @app.route("/mon-hoc", methods=['POST'])
 def process_mon_hoc():
   if "id" in request.form:  #Cập Nhật
+    messages = "Updated"
     update_mon_hoc(request.form['id'], request.form['name'])
   elif "delete" in request.form:  #Xoá
+    messages = "Deleted"
     delete_mon_hoc(request.form['delete'])
   else:  #Thêm mới
+    messages = "Created"
     add_mon_hoc(request.form['name'])
 
-  return redirect("/mon-hoc")
+  return redirect(url_for("mon_hoc", messages=messages))
 
 
 @app.route("/lop-hoc")
@@ -62,6 +77,17 @@ def lop_hoc_detail(lop_hoc_id):
                          ds_lop_hoc=ds_lop_hoc)
 
 
+@app.route("/lop-hoc/<int:lop_hoc_id>/trung-binh")
+def trung_binh(lop_hoc_id):
+  lop_hoc = get_lop_hoc(lop_hoc_id)
+  ds_hoc_sinh = list_hoc_sinh(lop_hoc_id)
+  ds_bang_diem = list_bang_diem_lop_hoc(1)
+  print(ds_bang_diem)
+  return render_template('trung-binh.html',
+                         ds_bang_diem=ds_bang_diem,
+                         lop_hoc=lop_hoc)
+
+
 @app.route("/lop-hoc/<int:lop_hoc_id>/bang-diem")
 def bang_diem(lop_hoc_id):
   ds_mon_hoc = list_mon_hoc()
@@ -69,7 +95,6 @@ def bang_diem(lop_hoc_id):
   ds_hoc_sinh = list_hoc_sinh(lop_hoc_id)
   mon_hoc = None
   hoc_ky = None
-
   if "mon_hoc" in request.args:
     mon_hoc = int(request.args['mon_hoc'])
   if "hoc_ky" in request.args:
@@ -146,78 +171,13 @@ def user_loader(user_id):
 
 @app.context_processor
 def common_attr():
-  return {'current_year': get_current_year()}
+  return {
+    'current_year': get_current_year(),
+    'json_ds_lop_hoc': json_list_lop_hoc(),
+    'common_ds_mon_hoc': list_mon_hoc(),
+    'common_ds_lop_hoc': list_lop_hoc()
+  }
 
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', debug=True)
-
-# @app.route("/settings", methods=['POST', 'GET'])
-# def settings():
-#   if request.method == 'POST':
-#     if "quy_dinh" in request.form:
-#       print(request.form)
-#       update_entities(1, 'quy_dinh', '')
-
-#   quy_dinh = get_entities('quy-dinh')
-#   return render_template('settings.html', quy_dinh=quy_dinh)
-
-# @app.route("/lop-hoc/<int:lop_hoc_id>", methods=['POST', 'GET'])
-# def dshs(lop_hoc_id):
-#   lop_hoc = get_lop_hoc(lop_hoc_id)
-#   danh_sach = list_hoc_sinh(lop_hoc_id)
-#   so_luong = 40
-#   return render_template('dshs.html',
-#                          lop_hoc=lop_hoc,
-#                          so_luong=so_luong,
-#                          danh_sach=danh_sach)
-
-# @app.route("/lop-hoc", methods=['POST', 'GET'])
-# def lop_hoc():
-#   if request.method == 'POST':
-#     if "id" in request.form:  #Cập Nhật
-#       update_lop_hoc(request.form['id'], request.form['name'],
-#                      request.form['khoi_lop'], request.form['nam_hoc'])
-#     elif "delete" in request.form:  #Xoá
-#       delete_lop_hoc(request.form['delete'])
-#     else:  #Thêm mới
-#       add_lop_hoc(request.form['name'], request.form['khoi_lop'],
-#                   request.form['nam_hoc'])
-
-#   lop_hoc = list_lop_hoc()
-#   return render_template('lop-hoc.html', lop_hoc=lop_hoc)
-
-# @app.route("/mon-hoc", methods=['POST', 'GET'])
-# def mon_hoc():
-#   if request.method == 'POST':
-#     if "id" in request.form:  #Cập Nhật
-#       update_mon_hoc(request.form['id'], request.form['name'])
-#     elif "delete" in request.form:  #Xoá
-#       delete_mon_hoc(request.form['delete'])
-#     else:  #Thêm mới
-#       add_mon_hoc(request.form['name'])
-
-#   mon_hoc = list_mon_hoc()
-#   return render_template('mon-hoc.html', mon_hoc=mon_hoc)
-
-# @app.route("/students", methods=['POST', 'GET'])
-# def students():
-#   if request.method == 'POST':
-#     if "id" in request.form:
-#       student = update_student(request.form['id'], request.form['name'],
-#                                request.form['gender'],
-#                                request.form['brithday'],
-#                                request.form['address'])
-#     elif "delete" in request.form:
-#       student = delete_student(request.form['delete'])
-#     else:
-#       student = add_student(request.form['name'], request.form['gender'],
-#                             request.form['brithday'], request.form['address'])
-#   else:
-#     student = ''
-#   students = get_students()
-#   return render_template('students.html', students=students, student=student)
-
-# @app.route("/classes")
-# def classes():
-#   return render_template('index.html')

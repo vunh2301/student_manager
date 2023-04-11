@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, Integer, DateTime
 from app import db, app
 from flask_login import UserMixin
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 # Define Model
@@ -75,6 +76,56 @@ class Bang_diem(db.Model):
   diem_45p_hk2_2 = Column(Integer)
   diem_45p_hk2_3 = Column(Integer)
   dien_trung_binh_hk2 = Column(Integer)
+
+  @hybrid_property
+  def total(self):
+    count = 1
+    if self.diem_15p_hk2_1 != None:
+      count += 1
+    if self.diem_15p_hk2_2 != None:
+      count += 1
+    if self.diem_15p_hk2_3 != None:
+      count += 1
+    if self.diem_15p_hk2_4 != None:
+      count += 1
+    if self.diem_15p_hk2_5 != None:
+      count += 1
+    if self.diem_45p_hk1_1 != None:
+      count += 2
+    if self.diem_45p_hk1_2 != None:
+      count += 2
+    if self.diem_45p_hk1_3 != None:
+      count += 2
+    if self.diem_thi_hk1 != None:
+      count += 3
+    return 10
+
+  @total.expression
+  def total(cls):
+    count = 1
+    if cls.diem_15p_hk2_1 != None:
+      count += 1
+    if cls.diem_15p_hk2_2 != None:
+      count += 1
+    if cls.diem_15p_hk2_3 != None:
+      count += 1
+    if cls.diem_15p_hk2_4 != None:
+      count += 1
+    if cls.diem_15p_hk2_5 != None:
+      count += 1
+    if cls.diem_45p_hk1_1 != None:
+      count += 2
+    if cls.diem_45p_hk1_2 != None:
+      count += 2
+    if cls.diem_45p_hk1_3 != None:
+      count += 2
+    if cls.diem_thi_hk1 != None:
+      count += 3
+    return 10
+
+  @hybrid_property
+  def tb_hk2(self):
+    return self.id > 1
 
   def __str__(self):
     return self.name
